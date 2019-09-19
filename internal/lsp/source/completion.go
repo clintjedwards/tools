@@ -429,12 +429,6 @@ func Completion(ctx context.Context, view View, f GoFile, pos protocol.Position,
 	if path == nil {
 		return nil, nil, errors.Errorf("cannot find node enclosing position")
 	}
-	// Skip completion inside comments.
-	for _, g := range file.Comments {
-		if g.Pos() <= rng.Start && rng.Start <= g.End() {
-			return nil, nil, nil
-		}
-	}
 	// Skip completion inside any kind of literal.
 	if _, ok := path[0].(*ast.BasicLit); ok {
 		return nil, nil, nil
@@ -473,6 +467,14 @@ func Completion(ctx context.Context, view View, f GoFile, pos protocol.Position,
 	}
 
 	c.expectedType = expectedType(c)
+
+	// Comment completions
+	for _, comment := range file.Comments {
+		if comment.Pos() <= rng.Start && rng.Start <= comment.End() {
+			c.comments(rng)
+			return c.items, c.getSurrounding(), nil
+		}
+	}
 
 	// Struct literals are handled entirely separately.
 	if c.wantStructFieldCompletions() {
@@ -538,6 +540,30 @@ func Completion(ctx context.Context, view View, f GoFile, pos protocol.Position,
 	}
 
 	return c.items, c.getSurrounding(), nil
+}
+
+func (c *completer) comments(cursor span.Range) {
+	path, _ := astutil.PathEnclosingInterval(c.file, cursor.Start+1, cursor.Start+1)
+	switch node := path[0].(type) {
+	case *ast.GenDecl:
+		if node.Tok != token.VAR {
+			return
+		}
+		for _, spec := range node.Specs {
+			if value, ok := spec.(*ast.ValueSpec); ok {
+				for _, name := range value.Names {
+					if name.Name == "_" {
+						continue
+					}
+					//lolwut :=  pkg.GetTypesInfo().ObjectOf(name.Obj)
+					myObject := c.info.ObjectOf(name)
+					c.found(myObject, stdScore, nil)
+				}
+			}
+		}
+	}
+	//gen, _ := path[0].(*ast.GenDecl)
+	//log.Error(c.ctx, fmt.Sprintf("%s:%+v", "TESTING:", gen.Specs[0]), nil)
 }
 
 func (c *completer) wantStructFieldCompletions() bool {

@@ -527,8 +527,8 @@ func (c *completer) comments(cursor span.Range) {
 					if name.Name == "_" {
 						continue
 					}
-					//lolwut :=  pkg.GetTypesInfo().ObjectOf(name.Obj)
-					myObject := c.info.ObjectOf(name)
+					myObject := c.pkg.GetTypesInfo().ObjectOf(name)
+					//myObject := c.info.ObjectOf(name)
 					c.found(myObject, stdScore, nil)
 				}
 			}

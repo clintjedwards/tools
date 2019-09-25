@@ -4,9 +4,12 @@ type position struct { //@item(structPosition, "position", "struct{...}", "struc
 	X, Y int //@item(fieldX, "X", "int", "field"),item(fieldY, "Y", "int", "field")
 }
 
+//@complete("/", AcVar)
+var Ac string //@item(AcVar, "Ac", "string", "var")
+
 func _() {
 	_ = position{
-		//@complete("", fieldX, fieldY, structPosition)
+		//@complete("", fieldX, fieldY, AcVar, structPosition)
 	}
 	_ = position{
 		X: 1,
@@ -18,7 +21,7 @@ func _() {
 	}
 	_ = []*position{
         {
-            //@complete("", fieldX, fieldY, structPosition)
+            //@complete("", fieldX, fieldY, AcVar, structPosition)
         },
 	}
 }
@@ -30,22 +33,22 @@ func _() {
 	)
 
 	_ = map[int]int{
-		a: a, //@complete(":", abVar, aaVar),complete(",", abVar, aaVar)
+		a: a, //@complete(":", abVar, aaVar, AcVar),complete(",", abVar, aaVar, AcVar)
 	}
 
 	_ = map[int]int{
-		//@complete("", abVar, aaVar, structPosition)
+		//@complete("", abVar, aaVar, AcVar, structPosition)
 	}
 
-	_ = []string{a: ""} //@complete(":", abVar, aaVar)
-	_ = [1]string{a: ""} //@complete(":", abVar, aaVar)
+	_ = []string{a: ""} //@complete(":", abVar, aaVar, AcVar)
+	_ = [1]string{a: ""} //@complete(":", abVar, aaVar, AcVar)
 
-	_ = position{X: a}   //@complete("}", abVar, aaVar)
-	_ = position{a}      //@complete("}", abVar, aaVar)
-	_ = position{a, }      //@complete("}", abVar, aaVar, structPosition)
+	_ = position{X: a}   //@complete("}", abVar, aaVar, AcVar)
+	_ = position{a}      //@complete("}", abVar, aaVar, AcVar)
+	_ = position{a, }      //@complete("}", abVar, aaVar, AcVar, structPosition)
 
-	_ = []int{a}  //@complete("a", abVar, aaVar, structPosition)
-	_ = [1]int{a} //@complete("a", abVar, aaVar, structPosition)
+	_ = []int{a}  //@complete("a", abVar, aaVar, AcVar, structPosition)
+	_ = [1]int{a} //@complete("a", abVar, aaVar, AcVar, structPosition)
 
 	type myStruct struct {
 		AA int    //@item(fieldAA, "AA", "int", "field")
@@ -53,7 +56,7 @@ func _() {
 	}
 
 	_ = myStruct{
-		AB: a, //@complete(",", aaVar, abVar)
+		AB: a, //@complete(",", aaVar, AcVar, abVar)
 	}
 
 	var s myStruct
@@ -70,7 +73,7 @@ func _() {
 
 func _() {
 	_ := position{
-		X: 1, //@complete("X", fieldX),complete(" 1", structPosition)
-		Y: ,  //@complete(":", fieldY),complete(" ,", structPosition)
+		X: 1, //@complete("X", fieldX),complete(" 1", AcVar, structPosition)
+		Y: ,  //@complete(":", fieldY),complete(" ,", AcVar, structPosition)
 	}
 }
